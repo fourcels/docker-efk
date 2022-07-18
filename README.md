@@ -15,14 +15,14 @@ Collection `linux` docker container logs
     $ docker compose up -d
     ```
 
-1. generate `kibana_system` password
+1. reset `kibana_system` password
     ```bash
     $ docker compose exec elasticsearch /bin/bash
 
     elasticsearch@:~$ ./bin/elasticsearch-reset-password -u kibana_system
     ```
 
-1. change `KIBANA_PASSWORD` in `.env` with generate `kibana_system` password
+1. change `KIBANA_PASSWORD` in `.env` with `kibana_system` password
     ```bash
     # Password for the 'kibana_system' user (at least 6 characters)
     KIBANA_PASSWORD=changeme
