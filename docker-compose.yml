@@ -1,0 +1,52 @@
+version: "3"
+
+# Deploying three container services (filebeat, elasticsearch, and kibana)
+services:
+  filebeat:
+    image: elastic/filebeat:${STACK_VERSION} #filebeat: a lightweight log file data collector, which is one of the six log collectors of Beats
+    user: root
+    depends_on:
+      - elasticsearch
+      - kibana
+    volumes:
+      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+
+  elasticsearch:
+    image: elasticsearch:${STACK_VERSION}
+    ports:
+      - 9200:9200
+    environment:
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      # Bootstrap password.
+      # Used to initialize the keystore during the initial startup of
+      # Elasticsearch. Ignored on subsequent runs.
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+      xpack.security.enabled: true
+      xpack.license.self_generated.type: ${LICENSE:-}
+
+    volumes:
+      # Stores elasticsearch data locally on the esdata Docker volume
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: kibana:${STACK_VERSION}
+    depends_on:
+      - elasticsearch
+    ports:
+      # Runs kibana service on default port 5601
+      - 5601:5601
+    environment:
+      SERVER_PUBLICBASEURL: https://kibana.k8s2.ouhaihr.com
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD:-}
+
+volumes:
+  esdata:
