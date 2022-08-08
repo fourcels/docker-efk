@@ -13,7 +13,7 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
 
   elasticsearch:
     image: elasticsearch:${STACK_VERSION}
@@ -24,12 +24,12 @@ services:
       # Bootstrap password.
       # Used to initialize the keystore during the initial startup of
       # Elasticsearch. Ignored on subsequent runs.
-      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       # Use single node discovery in order to disable production mode and avoid bootstrap checks.
       # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
       xpack.security.enabled: true
-      xpack.license.self_generated.type: ${LICENSE:-}
+      xpack.license.self_generated.type: ${LICENSE}
 
     volumes:
       # Stores elasticsearch data locally on the esdata Docker volume
@@ -45,7 +45,7 @@ services:
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       ELASTICSEARCH_USERNAME: kibana_system
-      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD:-}
+      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD}
 
 volumes:
   esdata:
