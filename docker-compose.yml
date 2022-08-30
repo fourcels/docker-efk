@@ -4,6 +4,7 @@ version: "3"
 services:
   filebeat:
     image: elastic/filebeat:${STACK_VERSION} #filebeat: a lightweight log file data collector, which is one of the six log collectors of Beats
+    restart: always
     user: root
     depends_on:
       - elasticsearch
@@ -17,6 +18,7 @@ services:
 
   elasticsearch:
     image: elasticsearch:${STACK_VERSION}
+    restart: always
     ports:
       - 9200:9200
     environment:
@@ -37,6 +39,7 @@ services:
 
   kibana:
     image: kibana:${STACK_VERSION}
+    restart: always
     depends_on:
       - elasticsearch
     ports:
